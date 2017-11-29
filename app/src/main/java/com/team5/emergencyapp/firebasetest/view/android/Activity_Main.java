@@ -51,13 +51,7 @@ public class Activity_Main extends AppCompatActivity implements AIListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Run.initialize();
-            }
-        });
-        t.start();
+
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
 
