@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 public class DAutoIncrement {
     public static final String MESSAGE = "messageOrder";
 
+    // Fill nameOrder with DAutoIncrement.MESSAGE
     public static long order(String nameOrder) throws NotFoundException {
         DatabaseReference myRef = FirebaseCore.firebaseDatabase.getReference("AutoIncrement").child(nameOrder);
         final CountDownLatch doneSignal = new CountDownLatch(1);
