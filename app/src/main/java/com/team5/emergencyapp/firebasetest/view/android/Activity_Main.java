@@ -20,17 +20,21 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.team5.emergencyapp.firebasetest.R;
-import com.team5.emergencyapp.firebasetest.core.model.ChatMessage;
+import com.team5.emergencyapp.firebasetest.core.controller.GlobalData;
 import com.team5.emergencyapp.firebasetest.core.model.Message;
+import com.team5.emergencyapp.firebasetest.core.model.RunnableDataSnapshot;
 import com.team5.emergencyapp.firebasetest.core.model.User;
 import com.team5.emergencyapp.firebasetest.firebase.dao.DAutoIncrement;
 import com.team5.emergencyapp.firebasetest.firebase.dao.DMessage;
 import com.team5.emergencyapp.firebasetest.firebase.dao.DMessageList;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import ai.api.AIDataService;
 import ai.api.AIListener;
@@ -50,6 +54,7 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
     LinearLayout chatList;
     private AIService aiService;
     Activity_Main activityMain;
+    User u2 = new User(); // to user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,7 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
         editText = (EditText) findViewById(R.id.editText);
         addBtn = (RelativeLayout) findViewById(R.id.addBtn);
         chatList = (LinearLayout) findViewById(R.id.chatList);
-
+        u2.setId(intent_Message);
 
         final AIConfiguration config = new AIConfiguration("e8eab6c8f98247cfa2af3e7f2739b797",
                 AIConfiguration.SupportedLanguages.English,
@@ -132,11 +137,8 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
                                     msg.setOrder(DAutoIncrement.order(DAutoIncrement.MESSAGE));
                                     msg = DMessage.crud(msg, false, false);
                                     // Hardcoded from
-                                    User u = new User();
-                                    u.setId("6ZxSGeHS4DOoFHEE2McBcGH7XHP2");
-                                    User u2 = new User();
-                                    u2.setId(intent_Message);
-                                    DMessageList.crd(u2, u, msg, false, false);
+
+                                    DMessageList.crd(u2, GlobalData.u, msg, false, false);
                                 } catch (Exception e) {
                                     Log.e("TestError", e.getMessage());
                                     e.printStackTrace();
@@ -188,24 +190,116 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
             }
         });
 
+        // Fill the message with initial data
+        final Activity_Main activityMainFinal = this;
+        Thread tz = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final ArrayList<Message> messages = DMessageList.crd(GlobalData.u, u2, null, true, false);
+                    ArrayList<Message> messagesb = DMessageList.crd(u2, GlobalData.u, null, true, false);
+                    for (Message mes : messagesb
+                            ) {
+                        DMessage.crud(mes, true, false); // Fill the message with data);
+                    }
+                    for (Message mes : messages
+                            ) {
+                        DMessage.crud(mes, true, false); // Fill the message with data
 
-//                Log.e("Test", "chatIs: Firebase handler");
-//                if (model.getMsgUser().equals("user")) {
-//
-//                    viewHolder.rightText.setText(model.getMsgText());
-//
-//                    viewHolder.rightText.setVisibility(View.VISIBLE);
-//                    viewHolder.leftText.setVisibility(View.GONE);
-//                } else {
-//                    viewHolder.leftText.setText(model.getMsgText());
-//
-//                    viewHolder.rightText.setVisibility(View.GONE);
-//                    viewHolder.leftText.setVisibility(View.VISIBLE);
-//                }
+                    }
+                    // Sorting require all messages element to be filled, otherwise, it won't work
+                    Collections.sort(messagesb);
+                    Collections.sort(messages);
+                    ArrayList<Message> messagesa = (ArrayList<Message>) messages.clone(); // copy the messages
+
+                    ArrayList<Message> messages3 = new ArrayList<Message>();
+                    int totalmessages = messagesa.size() + messagesb.size();
+                    for (int i = 0; i < totalmessages; i++
+                            ) {
+
+                        if (messagesa.size() == 0) {
+                            final Message messageFinal = messagesb.remove(0);
+                            messages3.add(messageFinal);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    activityMainFinal.addChat(messageFinal.getMessage(), true);
+                                }
+                            });
+
+                        } else if (messagesb.size() == 0) {
+                            final Message messageFinal = messagesa.remove(0);
+                            messages3.add(messageFinal);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    activityMainFinal.addChat(messageFinal.getMessage(), false);
+                                }
+                            });
+                        } else if (messagesa.get(0).compareTo(messagesb.get(0)) < 0) {
+                            final Message messageFinal = messagesa.remove(0);
+                            messages3.add(messageFinal);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    activityMainFinal.addChat(messageFinal.getMessage(), false);
+                                }
+                            });
+                        } else {
+                            final Message messageFinal = messagesb.remove(0);
+                            messages3.add(messageFinal);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    activityMainFinal.addChat(messageFinal.getMessage(), true);
+                                }
+                            });
+                        }
+
+                    }
+                    for (int i = 0; i < totalmessages; i++
+                            ) {
+
+                        Log.e("Test", "The messages order is :" + messages3.get(i).getOrder());
+
+                    }
+
+                    RunnableDataSnapshot rds = new RunnableDataSnapshot() {
+                        @Override
+                        public void run(DataSnapshot dataSnapshot, Object object) {
+                            ArrayList<Message> messages2 = (ArrayList<Message>) object;
+                            Collections.sort(messages2);
+                            for (int i = messages.size(); i < messages2.size(); i++) {
+                                Log.e("New Input", messages2.get(i).getId());
+                                final Message msg = messages2.get(i);
+                                messages.add(msg);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        activityMainFinal.addChat(msg.getMessage(), false);
+                                    }
+                                });
+                            }
+                            Log.e("Data change", "Data is changing");
+                        }
+                    };
+                    DMessageList.nonblockRead(GlobalData.u, u2, rds);
+                } catch (Exception e) {
+                    Log.e("Test", "Exception " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+        tz.start();
 
 
     }
 
+    /**
+     * Run on UI thread using runOnUiThread
+     * @param msg
+     * @param user
+     */
     public void addChat(String msg, boolean user) { // Add message to the screen. If it's user, then set on the left, else on the right
         TextView tv = new TextView(activityMain);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -277,14 +371,14 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
         Result result = response.getResult();
 
         String message = result.getResolvedQuery();
-        ChatMessage chatMessage0 = new ChatMessage(message, "user");
-        ref.child("chat").push().setValue(chatMessage0);
-        Log.e("Test", "chatIs2" + chatMessage0.getMsgText());
+//        ChatMessage chatMessage0 = new ChatMessage(message, "user");
+//        ref.child("chat").push().setValue(chatMessage0);
+        Log.e("Test", "chatIs2" + message);
 
         String reply = result.getFulfillment().getSpeech();
-        ChatMessage chatMessage = new ChatMessage(reply, "bot");
-        ref.child("chat").push().setValue(chatMessage);
-        Log.e("Test", "chatIs2" + chatMessage.getMsgText());
+//        ChatMessage chatMessage = new ChatMessage(reply, "bot");
+//        ref.child("chat").push().setValue(chatMessage);
+        Log.e("Test", "chatIs2" + reply);
 
     }
 

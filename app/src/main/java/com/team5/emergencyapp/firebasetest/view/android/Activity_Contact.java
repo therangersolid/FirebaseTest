@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.team5.emergencyapp.firebasetest.R;
+import com.team5.emergencyapp.firebasetest.core.controller.GlobalData;
 import com.team5.emergencyapp.firebasetest.core.controller.Run;
 import com.team5.emergencyapp.firebasetest.core.model.User;
 import com.team5.emergencyapp.firebasetest.firebase.dao.DUser;
@@ -44,16 +45,15 @@ public class Activity_Contact extends AppCompatActivity {
         Thread t = new Thread(new Runnable() { // get the user group first!
             @Override
             public void run() {
-                User u = new User();
-                u.setId("6ZxSGeHS4DOoFHEE2McBcGH7XHP2");
+
 
                 try {
-                    u = DUser.crud(u, true);
+                    GlobalData.u = DUser.crud(GlobalData.u, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Log.e("Test", u.getEmail());
-                final User us = u;
+                Log.e("Test", GlobalData.u.getEmail());
+                final User us = GlobalData.u;
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -85,22 +85,24 @@ public class Activity_Contact extends AppCompatActivity {
                         @Override
                         public void run() {
                             for (int i = 0; i < users3.size(); i++) {
-                                TextView tempTextView = new TextView(activityContact);
-                                final String userID = users3.get(i).getId();
-                                tempTextView.setText(userID);
-                                tempTextView.setPadding(0, Utility.dipToPX(5), 0, Utility.dipToPX(5));
-                                tempTextView.setTextColor(getResources().getColor(R.color.black));
-                                tempTextView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(activityContact, Activity_Main.class);
-                                        intent.putExtra(MESSAGE_TYPE, INDIVIDUAL);
-                                        intent.putExtra(MESSAGE, userID);
-                                        activityContact.startActivity(intent);
-                                    }
-                                });
-                                messageList.addView(tempTextView);
-                                Log.e("Test", users3.get(i).getId());
+                                if (!us.getId().equals(users3.get(i).getId())) {// do not show the current id!
+                                    TextView tempTextView = new TextView(activityContact);
+                                    final String userID = users3.get(i).getId();
+                                    tempTextView.setText(userID);
+                                    tempTextView.setPadding(0, Utility.dipToPX(5), 0, Utility.dipToPX(5));
+                                    tempTextView.setTextColor(getResources().getColor(R.color.black));
+                                    tempTextView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(activityContact, Activity_Main.class);
+                                            intent.putExtra(MESSAGE_TYPE, INDIVIDUAL);
+                                            intent.putExtra(MESSAGE, userID);
+                                            activityContact.startActivity(intent);
+                                        }
+                                    });
+                                    messageList.addView(tempTextView);
+                                    Log.e("Test", users3.get(i).getId());
+                                }
                             }
                         }
                     });

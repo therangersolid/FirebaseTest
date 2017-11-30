@@ -18,6 +18,7 @@ public class Activity_Splash extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         Utility.initialize(getResources());
         Run.initialize();
+
         final Activity_Splash activitySplash = this;
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {

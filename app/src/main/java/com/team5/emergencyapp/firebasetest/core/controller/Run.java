@@ -26,6 +26,8 @@ public class Run {
 
     // Runt it at least once on UI thread
     public static void initialize() {
+        GlobalData.u = new User();
+        GlobalData.u.setId("Hh7qGadAgPeRUJYAEGjvRu845DC3");//
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -81,6 +83,7 @@ public class Run {
 //                        @Override
 //                        public void run(DataSnapshot dataSnapshot, Object object) {
 //                            ArrayList<Message> messages2 = (ArrayList<Message>) object;
+//                Collections.sort(messages2);
 //                            for (int i = messages.size(); i < messages2.size(); i++) {
 //                                Log.e("New Input", messages2.get(i).getId());
 //                                messages.add(messages2.get(i));
