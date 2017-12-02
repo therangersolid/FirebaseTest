@@ -35,6 +35,7 @@ import com.team5.emergencyapp.firebasetest.firebase.dao.DMessageList;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import ai.api.AIDataService;
 import ai.api.AIListener;
@@ -151,22 +152,30 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
                         (new Thread(new Runnable() {
                             @Override
                             public void run() {
+                                ArrayList<User> userMember = GlobalData.u.getBroadcast().get(intent_Message);
+                                    if (userMember == null){
+                                        userMember = new ArrayList<User>();
+                                    }
+                                    for (User u : userMember
+                                            ) {
+                                        Log.e("Test", "Broadcasting to " + u.getId()+" With message "+message);
+                                        Message msg = new Message(); // Craft message
+                                        msg.setMessage(message);
+                                        msg.setTimestamp(System.currentTimeMillis());
+                                        msg.setBlobname(null);
+                                        msg.setBlob(null);
+                                        try {
+                                            msg.setOrder(DAutoIncrement.order(DAutoIncrement.MESSAGE));
+                                            msg = DMessage.crud(msg, false, false);
+                                            // Hardcoded from
+                                            DMessageList.crd(u, GlobalData.u, msg, false, false);
+                                        } catch (Exception e) {
+                                            Log.e("TestError", e.getMessage());
+                                            e.printStackTrace();
+                                        }
+                                    }
 
-                                Message msg = new Message(); // Craft message
-                                msg.setMessage(message);
-                                msg.setTimestamp(System.currentTimeMillis());
-                                msg.setBlobname(null);
-                                msg.setBlob(null);
-                                try {
-                                    msg.setOrder(DAutoIncrement.order(DAutoIncrement.MESSAGE));
-                                    msg = DMessage.crud(msg, false, false);
-                                    // Hardcoded from
 
-                                    DMessageList.crd(u2, GlobalData.u, msg, false, false);
-                                } catch (Exception e) {
-                                    Log.e("TestError", e.getMessage());
-                                    e.printStackTrace();
-                                }
                             }
                         })).start();
 

@@ -60,7 +60,8 @@ public class DUser {
                             for (DataSnapshot member:snapshot.getChildren()
                                  ) {
                                 User u = new User();
-                                u.setId(snapshot.getValue().toString());
+                                u.setId(member.getValue().toString());
+                                Log.e("Test", "User id: "+u.getId());
                                 userMember.add(u);
                             }
                             user.getBroadcast().put(groupname,userMember);
