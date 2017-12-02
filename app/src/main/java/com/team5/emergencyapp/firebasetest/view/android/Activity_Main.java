@@ -146,6 +146,30 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
                             }
                         })).start();
 
+                    } else if (intent_MessageType.equals(Activity_Contact.BROADCAST)) {
+                        Log.e("Test", "Enter broadcast");
+                        (new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Message msg = new Message(); // Craft message
+                                msg.setMessage(message);
+                                msg.setTimestamp(System.currentTimeMillis());
+                                msg.setBlobname(null);
+                                msg.setBlob(null);
+                                try {
+                                    msg.setOrder(DAutoIncrement.order(DAutoIncrement.MESSAGE));
+                                    msg = DMessage.crud(msg, false, false);
+                                    // Hardcoded from
+
+                                    DMessageList.crd(u2, GlobalData.u, msg, false, false);
+                                } catch (Exception e) {
+                                    Log.e("TestError", e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                        })).start();
+
                     }
 
                 } else {
@@ -190,113 +214,114 @@ public class Activity_Main extends AppCompatActivity implements AIListener {
             }
         });
 
-        // Fill the message with initial data
-        final Activity_Main activityMainFinal = this;
-        Thread tz = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final ArrayList<Message> messages = DMessageList.crd(GlobalData.u, u2, null, true, false);
-                    ArrayList<Message> messagesb = DMessageList.crd(u2, GlobalData.u, null, true, false);
-                    for (Message mes : messagesb
-                            ) {
-                        DMessage.crud(mes, true, false); // Fill the message with data);
-                    }
-                    for (Message mes : messages
-                            ) {
-                        DMessage.crud(mes, true, false); // Fill the message with data
-
-                    }
-                    // Sorting require all messages element to be filled, otherwise, it won't work
-                    Collections.sort(messagesb);
-                    Collections.sort(messages);
-                    ArrayList<Message> messagesa = (ArrayList<Message>) messages.clone(); // copy the messages
-
-                    ArrayList<Message> messages3 = new ArrayList<Message>();
-                    int totalmessages = messagesa.size() + messagesb.size();
-                    for (int i = 0; i < totalmessages; i++
-                            ) {
-
-                        if (messagesa.size() == 0) {
-                            final Message messageFinal = messagesb.remove(0);
-                            messages3.add(messageFinal);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    activityMainFinal.addChat(messageFinal.getMessage(), true);
-                                }
-                            });
-
-                        } else if (messagesb.size() == 0) {
-                            final Message messageFinal = messagesa.remove(0);
-                            messages3.add(messageFinal);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    activityMainFinal.addChat(messageFinal.getMessage(), false);
-                                }
-                            });
-                        } else if (messagesa.get(0).compareTo(messagesb.get(0)) < 0) {
-                            final Message messageFinal = messagesa.remove(0);
-                            messages3.add(messageFinal);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    activityMainFinal.addChat(messageFinal.getMessage(), false);
-                                }
-                            });
-                        } else {
-                            final Message messageFinal = messagesb.remove(0);
-                            messages3.add(messageFinal);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    activityMainFinal.addChat(messageFinal.getMessage(), true);
-                                }
-                            });
+        if (intent_MessageType.equals(Activity_Contact.INDIVIDUAL)) {
+            // Fill the message with initial data
+            final Activity_Main activityMainFinal = this;
+            Thread tz = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final ArrayList<Message> messages = DMessageList.crd(GlobalData.u, u2, null, true, false);
+                        ArrayList<Message> messagesb = DMessageList.crd(u2, GlobalData.u, null, true, false);
+                        for (Message mes : messagesb
+                                ) {
+                            DMessage.crud(mes, true, false); // Fill the message with data);
                         }
+                        for (Message mes : messages
+                                ) {
+                            DMessage.crud(mes, true, false); // Fill the message with data
 
-                    }
-                    for (int i = 0; i < totalmessages; i++
-                            ) {
+                        }
+                        // Sorting require all messages element to be filled, otherwise, it won't work
+                        Collections.sort(messagesb);
+                        Collections.sort(messages);
+                        ArrayList<Message> messagesa = (ArrayList<Message>) messages.clone(); // copy the messages
 
-                        Log.e("Test", "The messages order is :" + messages3.get(i).getOrder());
+                        ArrayList<Message> messages3 = new ArrayList<Message>();
+                        int totalmessages = messagesa.size() + messagesb.size();
+                        for (int i = 0; i < totalmessages; i++
+                                ) {
 
-                    }
-
-                    RunnableDataSnapshot rds = new RunnableDataSnapshot() {
-                        @Override
-                        public void run(DataSnapshot dataSnapshot, Object object) {
-                            ArrayList<Message> messages2 = (ArrayList<Message>) object;
-                            Collections.sort(messages2);
-                            for (int i = messages.size(); i < messages2.size(); i++) {
-                                Log.e("New Input", messages2.get(i).getId());
-                                final Message msg = messages2.get(i);
-                                messages.add(msg);
+                            if (messagesa.size() == 0) {
+                                final Message messageFinal = messagesb.remove(0);
+                                messages3.add(messageFinal);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        activityMainFinal.addChat(msg.getMessage(), false);
+                                        activityMainFinal.addChat(messageFinal.getMessage(), true);
+                                    }
+                                });
+
+                            } else if (messagesb.size() == 0) {
+                                final Message messageFinal = messagesa.remove(0);
+                                messages3.add(messageFinal);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        activityMainFinal.addChat(messageFinal.getMessage(), false);
+                                    }
+                                });
+                            } else if (messagesa.get(0).compareTo(messagesb.get(0)) < 0) {
+                                final Message messageFinal = messagesa.remove(0);
+                                messages3.add(messageFinal);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        activityMainFinal.addChat(messageFinal.getMessage(), false);
+                                    }
+                                });
+                            } else {
+                                final Message messageFinal = messagesb.remove(0);
+                                messages3.add(messageFinal);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        activityMainFinal.addChat(messageFinal.getMessage(), true);
                                     }
                                 });
                             }
-                            Log.e("Data change", "Data is changing");
+
                         }
-                    };
-                    DMessageList.nonblockRead(GlobalData.u, u2, rds);
-                } catch (Exception e) {
-                    Log.e("Test", "Exception " + e.getMessage());
-                    e.printStackTrace();
+                        for (int i = 0; i < totalmessages; i++
+                                ) {
+
+                            Log.e("Test", "The messages order is :" + messages3.get(i).getOrder());
+
+                        }
+
+                        RunnableDataSnapshot rds = new RunnableDataSnapshot() {
+                            @Override
+                            public void run(DataSnapshot dataSnapshot, Object object) {
+                                ArrayList<Message> messages2 = (ArrayList<Message>) object;
+                                Collections.sort(messages2);
+                                for (int i = messages.size(); i < messages2.size(); i++) {
+                                    Log.e("New Input", messages2.get(i).getId());
+                                    final Message msg = messages2.get(i);
+                                    messages.add(msg);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            activityMainFinal.addChat(msg.getMessage(), false);
+                                        }
+                                    });
+                                }
+                                Log.e("Data change", "Data is changing");
+                            }
+                        };
+                        DMessageList.nonblockRead(GlobalData.u, u2, rds);
+                    } catch (Exception e) {
+                        Log.e("Test", "Exception " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
-        tz.start();
-
-
-    }
+            });
+            tz.start();
+        }
+    } // OnCreate
 
     /**
      * Run on UI thread using runOnUiThread
+     *
      * @param msg
      * @param user
      */
