@@ -3,5 +3,5 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context=".view.android.Activity_Main">
+    tools:context=".view.android.Activity_Message">
 </AbsoluteLayout>

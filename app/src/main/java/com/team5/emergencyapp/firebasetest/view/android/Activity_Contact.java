@@ -1,16 +1,17 @@
 package com.team5.emergencyapp.firebasetest.view.android;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.team5.emergencyapp.firebasetest.R;
 import com.team5.emergencyapp.firebasetest.core.controller.GlobalData;
-import com.team5.emergencyapp.firebasetest.core.controller.Run;
 import com.team5.emergencyapp.firebasetest.core.model.User;
 import com.team5.emergencyapp.firebasetest.firebase.dao.DUser;
 import com.team5.emergencyapp.firebasetest.firebase.dao.DUserList;
@@ -24,24 +25,50 @@ public class Activity_Contact extends AppCompatActivity {
     public static final String BROADCAST = "BROADCAST"; // the data will be broadcast or individual or bots
     public static final String INDIVIDUAL = "INDIVIDUAL"; // the data will be broadcast or individual or bots
     public static final String BOT = "BOT"; // the data will be broadcast or individual or bots
+    private Activity_Contact activityContact;
+
+    public void setContent(final String messageType, String displayName, final String key, LinearLayout messageList) {
+        LinearLayout linearLayout = new LinearLayout(activityContact);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        ImageView imageView = new ImageView(activityContact);
+        if (messageType.equals(BROADCAST) || messageType.equals(BOT)) {
+            imageView.setBackgroundResource(R.drawable.admin_man);
+        } else {
+            imageView.setBackgroundResource(R.drawable.man);
+        }
+        linearLayout.addView(imageView);
+        TextView tempTextView = new TextView(activityContact);
+        tempTextView.setText(displayName);
+        tempTextView.setPadding(Utility.dipToPX(10), Utility.dipToPX(3), 0, 0);
+        tempTextView.setTextColor(getResources().getColor(R.color.black));
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activityContact, Activity_Message.class);
+                intent.putExtra(MESSAGE_TYPE, messageType);
+                intent.putExtra(MESSAGE, key);
+                activityContact.startActivity(intent);
+            }
+        });
+        linearLayout.addView(tempTextView);
+        linearLayout.setPadding(0, Utility.dipToPX(3), 0, Utility.dipToPX(10));
+        messageList.addView(linearLayout);
+        LinearLayout lineLinearLayout = new LinearLayout(activityContact);
+        lineLinearLayout.setPadding(0, Utility.dipToPX(1), 0, 0);
+        lineLinearLayout.setBackgroundColor(Color.GRAY);
+        messageList.addView(lineLinearLayout);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-        final Activity_Contact activityContact = this;
+        activityContact = this;
         final LinearLayout messageList = (LinearLayout) findViewById(R.id.groupList);
-        TextView chatWithBot = (TextView) findViewById(R.id.chatWithBot);
-        chatWithBot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activityContact, Activity_Main.class);
-                intent.putExtra(MESSAGE_TYPE, BOT);
-                intent.putExtra(MESSAGE, "");
-                activityContact.startActivity(intent);
-            }
-        });
+
+        setContent(BOT, "Chat with bot!", "", messageList);
+        Intent intent = new Intent(activityContact, Activity_Message.class);
         Thread t = new Thread(new Runnable() { // get the user group first!
             @Override
             public void run() {
@@ -60,52 +87,31 @@ public class Activity_Contact extends AppCompatActivity {
                     public void run() {
                         Set<String> keysets = us.getBroadcast().keySet();
                         for (final String key : keysets) {
-                            TextView tempTextView = new TextView(activityContact);
-                            tempTextView.setText(key);
-                            tempTextView.setPadding(0, Utility.dipToPX(5), 0, Utility.dipToPX(5));
-                            tempTextView.setTextColor(getResources().getColor(R.color.black));
-                            tempTextView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(activityContact, Activity_Main.class);
-                                    intent.putExtra(MESSAGE_TYPE, BROADCAST);
-                                    intent.putExtra(MESSAGE, key);
-                                    activityContact.startActivity(intent);
-                                }
-                            });
-                            messageList.addView(tempTextView);
+                            setContent(BROADCAST, key, key, messageList);
                             Log.e("Test", key);
                         }
                     }
                 });
                 try {
                     final ArrayList<User> users3 = DUserList.r();// Get full array of users
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (int i = 0; i < users3.size(); i++) {
-                                if (!us.getId().equals(users3.get(i).getId())) {// do not show the current id!
-                                    TextView tempTextView = new TextView(activityContact);
-                                    final String userID = users3.get(i).getId();
-                                    tempTextView.setText(userID);
-                                    tempTextView.setPadding(0, Utility.dipToPX(5), 0, Utility.dipToPX(5));
-                                    tempTextView.setTextColor(getResources().getColor(R.color.black));
-                                    tempTextView.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent = new Intent(activityContact, Activity_Main.class);
-                                            intent.putExtra(MESSAGE_TYPE, INDIVIDUAL);
-                                            intent.putExtra(MESSAGE, userID);
-                                            activityContact.startActivity(intent);
-                                        }
-                                    });
-                                    messageList.addView(tempTextView);
-                                    Log.e("Test", users3.get(i).getId());
-                                }
+                    {
+                        for (int i = 0; i < users3.size(); i++) {
+                            if (!us.getId().equals(users3.get(i).getId())) {// do not show the current id!
+                                final String userID = users3.get(i).getId();
+                                User user = new User();
+                                user.setId(userID);
+                                user = DUser.crud(user, true);
+                                final User fuser = user;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setContent(INDIVIDUAL, fuser.getEmail(), userID, messageList);
+                                    }
+                                });
+                                Log.e("Test", users3.get(i).getId());
                             }
                         }
-                    });
+                    }
                 } catch (Exception e) {
                     Log.e("Test", e.getMessage());
                     e.printStackTrace();
