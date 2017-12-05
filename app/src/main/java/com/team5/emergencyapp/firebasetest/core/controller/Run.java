@@ -1,22 +1,8 @@
 package com.team5.emergencyapp.firebasetest.core.controller;
 
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.team5.emergencyapp.firebasetest.core.model.Message;
-import com.team5.emergencyapp.firebasetest.core.model.RunnableDataSnapshot;
+import com.google.firebase.auth.FirebaseAuth;
 import com.team5.emergencyapp.firebasetest.core.model.User;
 import com.team5.emergencyapp.firebasetest.firebase.FirebaseCore;
-import com.team5.emergencyapp.firebasetest.firebase.dao.DAutoIncrement;
-import com.team5.emergencyapp.firebasetest.firebase.dao.DBroadcast;
-import com.team5.emergencyapp.firebasetest.firebase.dao.DMessage;
-import com.team5.emergencyapp.firebasetest.firebase.dao.DMessageList;
-import com.team5.emergencyapp.firebasetest.firebase.dao.DUser;
-import com.team5.emergencyapp.firebasetest.firebase.dao.DUserList;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Created by therangersolid on 9/30/17.
@@ -26,6 +12,9 @@ public class Run {
 
     // Runt it at least once on UI thread
     public static void initialize() {
+//Get Firebase auth instance
+        GlobalData.auth = FirebaseAuth.getInstance();
+
         GlobalData.u = new User();
         GlobalData.u.setId("Hh7qGadAgPeRUJYAEGjvRu845DC3");//
         Thread t = new Thread(new Runnable() {

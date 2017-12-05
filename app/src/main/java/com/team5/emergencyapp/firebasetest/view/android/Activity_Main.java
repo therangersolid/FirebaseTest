@@ -14,6 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.team5.emergencyapp.firebasetest.R;
+import com.team5.emergencyapp.firebasetest.core.model.LoginActivity;
+
+import static com.team5.emergencyapp.firebasetest.core.controller.GlobalData.auth;
 
 public class Activity_Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,7 +34,7 @@ public class Activity_Main extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+ //               Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 Intent intent = new Intent(mainActivity, Activity_SimpleCalling.class);
                 mainActivity.startActivity(intent);
@@ -92,6 +95,15 @@ public class Activity_Main extends AppCompatActivity
             Intent intent = new Intent(mainActivity, Activity_LocationUsingLocationAPI.class);
             mainActivity.startActivity(intent);
         } else if (id == R.id.nav_setting) {
+
+        } else if (id == R.id.nav_logout) {
+            auth.signOut();
+            Intent intent = new Intent(mainActivity, LoginActivity.class);
+            mainActivity.startActivity(intent);
+            mainActivity.finish();
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_soundbutton) {
             Intent intent = new Intent(mainActivity, Activity_SoundButton.class);

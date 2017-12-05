@@ -49,6 +49,16 @@
             android:name=".view.android.Activity_Main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".core.model.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".core.model.SignupActivity">
+        </activity>
+        <activity
+            android:name=".core.model.ResetPasswordActivity">
+        </activity>
     </application>
 
 </manifest>

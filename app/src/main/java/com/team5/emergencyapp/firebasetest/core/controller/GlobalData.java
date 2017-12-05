@@ -1,5 +1,6 @@
 package com.team5.emergencyapp.firebasetest.core.controller;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.team5.emergencyapp.firebasetest.core.model.User;
 
 /**
@@ -8,4 +9,5 @@ import com.team5.emergencyapp.firebasetest.core.model.User;
 
 public class GlobalData {
     public static User u;
+    public static FirebaseAuth auth;
 }
