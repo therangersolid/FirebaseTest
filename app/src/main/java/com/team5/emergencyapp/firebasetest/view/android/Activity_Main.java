@@ -15,6 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.team5.emergencyapp.firebasetest.R;
+import com.team5.emergencyapp.firebasetest.core.model.LoginActivity;
+
+import static com.team5.emergencyapp.firebasetest.core.controller.GlobalData.auth;
 
 public class Activity_Main extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -89,8 +92,11 @@ public class Activity_Main extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_logout) {
+            auth.signOut();
+            Intent intent = new Intent(mainActivity, LoginActivity.class);
+            mainActivity.startActivity(intent);
+            mainActivity.finish();
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

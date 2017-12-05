@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.team5.emergencyapp.firebasetest.R;
 import com.team5.emergencyapp.firebasetest.core.controller.Run;
+import com.team5.emergencyapp.firebasetest.core.model.LoginActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,7 +28,7 @@ public class Activity_Splash extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent(activitySplash, Activity_Main.class);
+                        Intent intent = new Intent(activitySplash, LoginActivity.class);
                         activitySplash.startActivity(intent);
                         activitySplash.finish();
                     }
