@@ -6,6 +6,8 @@
     <color name="white">#FFFFFF</color>
     <color name="blackText">#212121</color>
     <color name="black">#000000</color>
+    <color name="blue">#0260f7</color>
+    <color name="red">#f70101</color>
     <color name="radioButton">#A9A9A9</color>
     <color name="checkBox">#A9A9A9</color>
     <color name="reviewFonts">#2F4F4F</color>

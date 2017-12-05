@@ -30,6 +30,12 @@
             android:name=".view.android.Activity_Message">
         </activity>
         <activity
+            android:name=".view.android.Activity_AddGroup">
+        </activity>
+        <activity
+            android:name=".view.android.Activity_SoundButton">
+        </activity>
+        <activity
             android:name=".view.android.Activity_Main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
