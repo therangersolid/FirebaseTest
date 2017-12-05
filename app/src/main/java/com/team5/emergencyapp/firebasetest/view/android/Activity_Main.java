@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,8 +31,10 @@ public class Activity_Main extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                Intent intent = new Intent(mainActivity, Activity_SimpleCalling.class);
+                mainActivity.startActivity(intent);
             }
         });
 
@@ -87,14 +88,14 @@ public class Activity_Main extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_location) {
+            Intent intent = new Intent(mainActivity, Activity_LocationUsingLocationAPI.class);
+            mainActivity.startActivity(intent);
+        } else if (id == R.id.nav_setting) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
+        } else if (id == R.id.nav_soundbutton) {
+            Intent intent = new Intent(mainActivity, Activity_SoundButton.class);
+            mainActivity.startActivity(intent);
         } else if (id == R.id.nav_messaging) {
             Intent intent = new Intent(mainActivity, Activity_Contact.class);
             mainActivity.startActivity(intent);
