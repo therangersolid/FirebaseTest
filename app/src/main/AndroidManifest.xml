@@ -7,6 +7,7 @@
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <activity android:name=".view.android.Activity_Splash"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,6 +38,12 @@
         </activity>
         <activity
             android:name=".view.android.Activity_SoundButton">
+        </activity>
+        <activity
+            android:name=".view.android.Activity_SimpleCalling">
+        </activity>
+        <activity
+            android:name=".view.android.Activity_LocationUsingLocationAPI">
         </activity>
         <activity
             android:name=".view.android.Activity_Main"

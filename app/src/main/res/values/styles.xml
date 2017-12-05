@@ -44,5 +44,15 @@
         <item name="android:background">@color/colorAccent</item>
         <item name="android:textColor">#ffffff</item>
     </style>
+    <!-- Mayur's styles-->
+<style name="proceedButtonStyle">
+        <item name="android:textSize">@dimen/header_text</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:clickable">true</item>
+    </style>
+
 
 </resources>

@@ -25,7 +25,7 @@ public class Activity_SoundButton extends AppCompatActivity {
                     catSoundMediaPlayer.start();
                     started = true;
                 }else{
-                    catSoundMediaPlayer.stop();
+                    catSoundMediaPlayer.pause();
                     started = false;
                 }
             }

@@ -10,6 +10,12 @@
             android:title="Logout" />
         <item android:id="@+id/nav_manage" android:icon="@drawable/ic_menu_manage"
             android:title="Test" />
+        <item android:id="@+id/nav_location" android:icon="@drawable/ic_menu_gallery"
+            android:title="Location" />
+        <item android:id="@+id/nav_setting" android:icon="@drawable/ic_menu_slideshow"
+            android:title="nav_setting" />
+        <item android:id="@+id/nav_soundbutton" android:icon="@drawable/ic_menu_manage"
+            android:title="SOS Button" />
     </group>
 
     <item android:title="Communicate">
